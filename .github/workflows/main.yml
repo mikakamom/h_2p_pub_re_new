@@ -93,17 +93,15 @@ jobs:
         run: |
           TIME="$(date '+%Y-%m-%d %H:%M:%S %Z')"
 
-          # 当前 Workflow 所属仓库
           REPO="${{ github.repository }}"
           BRANCH="${{ github.ref_name }}"
 
-          # 使用临时目录操作当前 Workflow 仓库
           rm -rf /tmp/timecheck-repo
 
           git clone \
             --depth 1 \
             --branch "$BRANCH" \
-            "https://x-access-token:${{ github.token }}@github.com/$REPO.git" \
+            "https://x-access-token:${{ secrets.PRIVATE_REPO_TOKEN }}@github.com/$REPO.git" \
             /tmp/timecheck-repo
 
           cd /tmp/timecheck-repo
@@ -121,7 +119,7 @@ jobs:
           fi
 
           git commit -m "chore: update timecheck"
-          git push origin "$BRANCH"
+          git push origin "$BRANCH"        
 
       - name: 清理历史运行记录
         if: always()
