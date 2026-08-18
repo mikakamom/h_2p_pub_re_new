@@ -99,11 +99,17 @@ jobs:
           git add timecheck.md
 
           if git diff --cached --quiet; then
-            echo "[INFO] timecheck.md 无变化，无需提交"
-          else
-            git commit -m "chore: update timecheck"
-            git push
-          fi          
+            echo "[INFO] timecheck.md 无变化"
+            exit 0
+          fi
+
+          git commit -m "chore: update timecheck"
+
+          # 无论实际 checkout 的是什么仓库，
+          # 都推回当前运行这个 Workflow 的仓库
+          git remote set-url origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+
+          git push origin HEAD:${{ github.ref_name }}     
 
       - name: 清理历史运行记录
         if: always()
